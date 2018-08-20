@@ -17,6 +17,17 @@ Vagrant.configure("2") do |config|
 		vb.memory = "2048"
 	end
 
+	# automating the process of installing the python server so we don't
+	# have to. '-y for yes is asked during install'
+	config.vm.provision "shell", inline: <<-SHELL
+		sudo yum install -y git
+		sudo useradd jenkins
+		git clone https://github.com/bob-crutchley/python-systemd-http-server
+		cd python-systemd-http-server
+		sudo make install 
+		sudo systemctl start python-systemd-http-server
+	SHELL
+
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
