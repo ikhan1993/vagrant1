@@ -38,6 +38,13 @@ Vagrant.configure("2") do |config|
 		jenkins.vm.network "forwarded_port", guest: 9000, host: 8080, host_ip: "127.0.0.1"
 	end
 
+	config.vm.define "server" do |server|
+		server.vm.box = "centos/7"
+		server.vm.provider "virtualbox" do |vb|
+			vb.memory = "1024"
+		end
+	end
+
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
