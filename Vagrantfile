@@ -12,21 +12,31 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-	config.vm.box = "centos/7"
-	config.vm.provider "virtualbox" do |vb|
-		vb.memory = "2048"
-	end
+	# because we have called the box jenkins we write jenkins otherwise config if we 
+	# did not name it
+	config.vm.define "jenkins" do |jenkins|
+		jenkins.vm.box = "centos/7"
+		jenkins.vm.provider "virtualbox" do |vb|
+			vb.memory = "2048"
+		end
 
-	# automating the process of installing the python server so we don't
-	# have to. '-y for yes is asked during install'
-	config.vm.provision "shell", inline: <<-SHELL
-		sudo yum install -y git
-		sudo useradd jenkins
-		git clone https://github.com/bob-crutchley/python-systemd-http-server
-		cd python-systemd-http-server
-		sudo make install 
-		sudo systemctl start python-systemd-http-server
-	SHELL
+		# automating the process of installing the python server so we don't
+		# have to. '-y for yes is asked during install'
+		
+		# the below is commented and replace in a file script 
+		# config.vm.provision "shell", inline: <<-SHELL
+		#	sudo yum install -y git
+		#	sudo useradd jenkins
+		#	git clone https://github.com/bob-crutchley/python-systemd-http-server
+		#	cd python-systemd-http-server
+		#	sudo make install 
+		#	sudo systemctl start python-systemd-http-server
+		# SHELL
+		
+		# below is the replacement of the above
+		jenkins.vm.provision "shell", path: "scripts/python-server"
+		jenkins.vm.network "forwarded_port", guest: 9000, host: 8080, host_ip: "127.0.0.1"
+	end
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -43,7 +53,8 @@ Vagrant.configure("2") do |config|
   # within the machine from a port on the host machine and only allow access
   # via 127.0.0.1 to disable public access
 	# this is for port forwarding using host ip
-	config.vm.network "forwarded_port", guest: 9000, host: 8080, host_ip: "127.0.0.1"
+	# below is not used as we have name the box
+	# config.vm.network "forwarded_port", guest: 9000, host: 8080, host_ip: "127.0.0.1"
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
