@@ -10,6 +10,8 @@
   scripts:
   # the scripts i want to run on creation to array
   - python-server
+  - google-cloud-sdk
+  - terraform
 
 # new vm
 - name: server
